@@ -4,6 +4,7 @@ import java.util.Scanner;
 import data.Bar;
 import data.Point;
 import data.Force;
+import data.Support;
 
 public class DataReader {
 	private Scanner sc;
@@ -45,5 +46,11 @@ public class DataReader {
 		int numberOfPoint = sc.nextInt();
 		sc.nextLine();
 		return new Force(x, y, numberOfPoint);
+	}
+	public Support readAndCreateSupport() {
+		System.out.println("Poddaj numery wezlow z podporami: ");
+		int x = sc.nextInt();
+		sc.nextLine();
+		return new Support(x);
 	}
 }

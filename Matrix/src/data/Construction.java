@@ -11,28 +11,42 @@ public class Construction implements Serializable {
 
 	private Bar[] bars;
 	private Force[] forces;
+	private Support[] supports;
 	private int barsNumber;
 	private int forceNumber;
+	private int supportNumber;
 	private SimpleMatrix[] simpleMatrices;
 	private SimpleMatrix[] simpleCos;
 	private SimpleMatrix[] tableQ;
 	private SimpleMatrix[] tableKe;
 	private SimpleMatrix[] tableK;
 	private SimpleMatrix tableR0;
-	private SimpleMatrix[] tableR;
+	private SimpleMatrix tableR;
 	private SimpleMatrix globalK;
+	private SimpleMatrix reactionsTable;
+	private SimpleMatrix[] resultsq;
+	private SimpleMatrix[] results;
+	private SimpleMatrix resultsR;
+	private SimpleMatrix helpTable;
 
 	public Construction() {
 		bars = new Bar[maxBars];
 		forces = new Force[maxBars];
+		supports = new Support[maxBars];
 		simpleCos = new SimpleMatrix[maxBars];
 		simpleMatrices = new SimpleMatrix[maxBars];
 		tableQ = new SimpleMatrix[maxBars];
 		tableKe = new SimpleMatrix[maxBars];
 		tableK = new SimpleMatrix[maxBars];
+		resultsq = new SimpleMatrix[maxBars];
+		results = new SimpleMatrix[maxBars];
 		tableR0 = new SimpleMatrix();
-		tableR = new SimpleMatrix[0];
+		tableR = new SimpleMatrix();
 		globalK = new SimpleMatrix();
+		reactionsTable = new SimpleMatrix();
+		resultsR = new SimpleMatrix();
+		helpTable = new SimpleMatrix();
+	
 	}
 
 	public int getBarsNumber() {
@@ -62,10 +76,34 @@ public class Construction implements Serializable {
 		}
 	}
 
+	public void printForces() {
+		if (forceNumber == 0) {
+			System.out.println("Zdefiniuj obciazenie");
+		}
+		for (int i = 0; i < forceNumber; i++) {
+			System.out.println(forces[i]);
+		}
+	}
+
+	public void printSupport() {
+		if (supportNumber == 0) {
+			System.out.println("Zdefiniuj podpory");
+		}
+		for (int i = 0; i < supportNumber; i++) {
+			System.out.println(supports[i]);
+		}
+	}
+
 	public void addForce(Force force) {
 		forces[forceNumber] = force;
 		System.out.println("dodano obciążenie");
 		forceNumber++;
+	}
+
+	public void addSupport(Support support) {
+		supports[supportNumber] = support;
+		System.out.println("dodano podpore");
+		supportNumber++;
 	}
 
 	public void deletePoints() {
@@ -102,6 +140,7 @@ public class Construction implements Serializable {
 				newNumbers++;
 			}
 		}
+		
 		Point.setNextId(newNumbers);
 		System.out.println("barsNumber: " + barsNumber);
 		System.out.println("Point.getNextId(): " + Point.getNextId());
@@ -139,7 +178,6 @@ public class Construction implements Serializable {
 		int n = barsNumber;
 
 		for (int i = 0; i < n; i++) {
-			System.err.println("zabieram sie za tablice :)");
 
 			double x = (bars[i].end.getX() - bars[i].start.getX());
 			double y = (bars[i].end.getY() - bars[i].start.getY());
@@ -151,7 +189,7 @@ public class Construction implements Serializable {
 			simpleCos[i].set(0, 1, y1);
 			simpleCos[i].set(1, 2, x1);
 			simpleCos[i].set(1, 3, y1);
-			System.out.println("Nowa tablica cosinusow: ");
+
 		}
 	}
 
@@ -175,25 +213,59 @@ public class Construction implements Serializable {
 		int n = barsNumber;
 		int dim = 2 * (Point.getNextId() - 1);
 		globalK = new SimpleMatrix(dim, dim);
-
+		reactionsTable = new SimpleMatrix(dim, dim);
+		helpTable = new SimpleMatrix(dim, dim);
+		
 		for (int i = 0; i < n; i++) {
-
 			tableK[i] = new SimpleMatrix();
 			tableK[i] = (simpleMatrices[i].transpose()).mult(simpleCos[i].transpose().mult(tableKe[i]))
 					.mult(simpleCos[i]).mult(simpleMatrices[i]);
 			globalK = globalK.plus(tableK[i]);
+			helpTable= globalK.plus(tableK[i]);
 		}
+		
+		for (int i = 0; i < dim; i++) {
+			if (tableR.get(0, i) == 1) {
+				for (int j = 0; j < dim; j++) {
+					globalK.set(j, i, 0);
+					globalK.set(i, j, 0);
+				}
+				globalK.set(i, i, 1);
+			}
 
+		}
+		reactionsTable = globalK.invert().mult(tableR0.transpose());
+		resultsR = helpTable.mult(reactionsTable).minus(tableR0.transpose()).transpose();
 	}
 
 	// global table of forces
 	public void tableR0() {
 		int dim = 2 * (Point.getNextId() - 1);
 		tableR0 = new SimpleMatrix(1, dim);
-		
+
 		for (int i = 0; i < forceNumber; i++) {
-			tableR0.set(0, 2 * (forces[i].getNumberOfPoint() - 2), forces[i].getvalueX());
-			tableR0.set(0, 2 * (forces[i].getNumberOfPoint() - 1), forces[i].getvalueY());
+			tableR0.set(0, 2 * forces[i].getNumberOfPoint() - 2, forces[i].getvalueX());
+			tableR0.set(0, 2 * forces[i].getNumberOfPoint() - 1, forces[i].getvalueY());
+		}
+	}
+
+	// table of local displacement and forces in bars
+	public void resultsq() {
+		int n = barsNumber;
+		for (int i = 0; i < n; i++) {
+			resultsq[i] = simpleCos[i].mult(simpleMatrices[i]).mult(reactionsTable);
+			results[i]=tableKe[i].mult(resultsq[i]);
+		}
+	}
+	
+	// global table of supports
+	public void tableR() {
+		int dim = 2 * (Point.getNextId() - 1);
+		tableR = new SimpleMatrix(1, dim);
+
+		for (int i = 0; i < supportNumber; i++) {
+			tableR.set(0, 2 * supports[i].getPointNumber() - 2, 1);
+			tableR.set(0, 2 * supports[i].getPointNumber() - 1, 1);
 		}
 	}
 
@@ -210,11 +282,15 @@ public class Construction implements Serializable {
 			simpleMatrices[i].print();
 			simpleCos[i].print();
 			tableKe[i].print();
-			tableQ[i].print();
-
+		//	tableQ[i].print();
+			resultsq[i].print();
+			results[i].print();
 		}
-		globalK.print();
-		tableR0.print();
-
+	//	tableR0.print();
+		reactionsTable.print();
+	//	tableR.print();
+	
+	resultsR.print();
+		//helpTable.print();
 	}
 }

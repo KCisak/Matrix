@@ -8,7 +8,8 @@ import data.Bar;
 import data.Construction;
 import utils.DataReader;
 import utils.FileManager;
-import data.Force; 
+import data.Force;
+import data.Support;
 
 public class ConstructionControl {
 
@@ -34,74 +35,81 @@ public class ConstructionControl {
 	 * Główna pętla programu, która pozwala na wybór opcji i interakcję
 	 */
 	public void controlLoop() {
-		Option option=null;
-		 while (option != Option.EXIT) {
-	            try {
-		printOptions();
-		option = Option.createFromInt(dataReader.getInt());
-			switch (option) {
-			case ADD_BAR:
-				addBar();
-			
-				break;
-			case EXIT:
-                exit();
-			case ADD_FORCE:
-			addForce();
-			break;
-			case ADD_SUPPORT:
-	 addBar();
-			 break;
-			case PRINT:
-				printConstruction();
-				break;
-			case CORRECT:
-				deletePoints();
-				printConstruction();
-				break;
-			case CALCULATE:
-				construction.createTable();
-				construction.createCos();
-				construction.stiffnessKe();
-				construction.multipleTable();
-				construction.stiffnessK();
-				construction.tableR0();
-				break;
+		Option option = null;
+		while (option != Option.EXIT) {
+			try {
+				printOptions();
+				option = Option.createFromInt(dataReader.getInt());
+				switch (option) {
+				case ADD_BAR:
+					addBar();
+					break;
+				case EXIT:
+					exit();
+				case ADD_FORCE:
+					addForce();
+					break;
+				case ADD_SUPPORT:
+					addSupport();
+					break;
+				case PRINT:
+					printConstruction();
+					break;
+				case CORRECT:
+					deletePoints();
+					break;
+				case CALCULATE:
+					construction.tableR0();
+					construction.tableR();
+					construction.createTable();
+					construction.createCos();
+					construction.stiffnessKe();
+					construction.multipleTable();
+					construction.stiffnessK();
+					construction.resultsq();
+					break;
 
-			 }
-	            } catch (InputMismatchException e) {
-	                System.out.println("Wprowadzono niepoprawne dane, publikacji nie dodano");
-	            } catch (NumberFormatException | NoSuchElementException e) {
-	                System.out.println("Wybrana opcja nie istnieje, wybierz ponownie:");
-	            }
-		 }
-	         // zamykamy strumień wejścia
-				dataReader.close();
+				}
+			} catch (InputMismatchException e) {
+				System.out.println("Wprowadzono niepoprawne dane, publikacji nie dodano");
+			} catch (NumberFormatException | NoSuchElementException e) {
+				System.out.println("Wybrana opcja nie istnieje, wybierz ponownie:");
+			}
 		}
+		// zamykamy strumień wejścia
+		dataReader.close();
+	}
 
-	  private void exit() {
-	        fileManager.writeLibraryToFile(construction);
-	    }
+	private void exit() {
+		fileManager.writeLibraryToFile(construction);
+	}
+
 	private void addBar() {
 		Bar bar = dataReader.readAndCreateBar();
 		construction.addBar(bar);
 	}
-	
+
 	private void addForce() {
 		Force force = dataReader.readAndCreateForce();
 		construction.addForce(force);
 	}
 
-
+	private void addSupport() {
+		Support support = dataReader.readAndCreateSupport();
+		construction.addSupport(support);
+	}
 
 	private void printConstruction() {
 		construction.printBars();
+		construction.printForces();
+		construction.printSupport();
 		construction.printMatrix();
 	}
+
 	private void deletePoints() {
 		construction.deletePoints();
 		construction.renumerPoints();
-		}
+	}
 
 	private void printOptions() {
 		System.out.println("Wybierz opcję: ");
