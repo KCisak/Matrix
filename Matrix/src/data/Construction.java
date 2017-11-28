@@ -279,15 +279,15 @@ public class Construction implements Serializable {
 
 	public void printMatrix() {
 		for (int i = 0; i < tableNumber; i++) {
-			simpleMatrices[i].print();
-			simpleCos[i].print();
-			tableKe[i].print();
+			//simpleMatrices[i].print();
+			//simpleCos[i].print();
+			//tableKe[i].print();
 		//	tableQ[i].print();
 			resultsq[i].print();
 			results[i].print();
 		}
 	//	tableR0.print();
-		reactionsTable.print();
+	//	reactionsTable.print();
 	//	tableR.print();
 	
 	resultsR.print();
