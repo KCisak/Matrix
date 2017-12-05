@@ -10,6 +10,7 @@ import utils.DataReader;
 import utils.FileManager;
 import data.Force;
 import data.Support;
+import data.Calculation;
 
 public class ConstructionControl {
 
@@ -19,6 +20,7 @@ public class ConstructionControl {
 
 	// "biblioteka" przechowująca dane
 	private Construction construction;
+	private Calculation calculation;
 
 	public ConstructionControl() {
 		dataReader = new DataReader();
@@ -28,9 +30,11 @@ public class ConstructionControl {
 			System.out.println("Wczytano dane biblioteki z pliku ");
 		} catch (ClassNotFoundException | IOException e) {
 			construction = new Construction();
+			calculation = new Calculation();
 			System.out.println("Utworzono nowy plik.");
 		}
 	}
+
 	/*
 	 * Główna pętla programu, która pozwala na wybór opcji i interakcję
 	 */
@@ -59,14 +63,15 @@ public class ConstructionControl {
 					deletePoints();
 					break;
 				case CALCULATE:
-					construction.tableR0();
-					construction.tableR();
-					construction.createTable();
-					construction.createCos();
-					construction.stiffnessKe();
-					construction.multipleTable();
-					construction.stiffnessK();
-					construction.resultsq();
+					calculation.createTable(construction);
+					calculation.tableR0(construction);
+					calculation.tableR(construction);
+
+					calculation.createCos(construction);
+					calculation.stiffnessKe(construction);
+					calculation.multipleTable(construction);
+					calculation.stiffnessK(construction);
+					calculation.resultsq();
 					break;
 
 				}
@@ -103,7 +108,7 @@ public class ConstructionControl {
 		construction.printBars();
 		construction.printForces();
 		construction.printSupport();
-		construction.printMatrix();
+		calculation.printMatrix();
 	}
 
 	private void deletePoints() {
