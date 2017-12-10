@@ -1,7 +1,6 @@
 package utils;
 
 import java.util.Scanner;
-import data.Bar;
 import data.Point;
 import data.Force;
 import data.Support;
@@ -23,20 +22,18 @@ public class DataReader {
 		return number;
 	}
 
-	public Bar readAndCreateBar() {
-		System.out.println("[początek] Podaj współrzędną X: ");
+	public Point readAndCreatePoint() {
+		System.out.println("Podaj współrzędną X: ");
 		Double x = sc.nextDouble();
-		System.out.println("[początek] Podaj współrzędną Y: ");
+		System.out.println("Podaj współrzędną Y: ");
 		Double y = sc.nextDouble();
-		Point start = new Point(x, y);
-		System.out.println("[koniec] Podaj współrzędną X: ");
-		Double x2 = sc.nextDouble();
-		System.out.println("[koniec] Podaj współrzędną Y: ");
-		Double y2 = sc.nextDouble();
-		Point end = new Point(x2, y2);
 		sc.nextLine();
-		return new Bar(start, end);
+		int n = Point.getNextId();
+		return new Point(x, y, n);
 	}
+	
+	
+	
 	public Force readAndCreateForce() {
 		System.out.println("Czy kierunek X (0: nie; 1: tak (znak +/- oznacza kierunek wektora): ");
 		int x = sc.nextInt();

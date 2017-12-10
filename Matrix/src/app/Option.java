@@ -6,8 +6,8 @@ public enum Option {
     ADD_FORCE(2,"Dodanie sily"),
     ADD_SUPPORT(3,"Dodanie podpory"),  
     PRINT(4, "Wyświetlenie danych"),
-    CALCULATE(5, "Oblicz"),
-	CORRECT(6, "Napraw");
+    CALCULATE(5, "Oblicz");
+//	ADD_POINT(6, "Dodaj punkt");
  
     private int value;
     private String description;

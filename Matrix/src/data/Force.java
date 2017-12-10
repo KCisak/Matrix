@@ -46,4 +46,33 @@ public class Force implements Serializable {
 		return "Force [valueX=" + valueX + ", valueY=" + valueY + ", numberOfPoint=" + numberOfPoint + "]";
 	}
 
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + numberOfPoint;
+		result = prime * result + valueX;
+		result = prime * result + valueY;
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Force other = (Force) obj;
+		if (numberOfPoint != other.numberOfPoint)
+			return false;
+		if (valueX != other.valueX)
+			return false;
+		if (valueY != other.valueY)
+			return false;
+		return true;
+	}
+	
+
 }

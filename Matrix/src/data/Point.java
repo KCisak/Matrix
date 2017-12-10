@@ -7,10 +7,19 @@ public class Point implements Serializable{
 	private static final long serialVersionUID = -7564154470576190237L;
 	private double x;
 	private double y;
+	private int number;
 	// private double z;
 
 	public static int nextId = 1;
 	private int id;
+
+	public int getNumber() {
+		return number;
+	}
+
+	public void setNumber(int number) {
+		this.number = number;
+	}
 
 	public static void setNextId(int nextId) {
 		Point.nextId = nextId;
@@ -19,6 +28,14 @@ public class Point implements Serializable{
 	public Point(double x, double y) {
 		this.x = x;
 		this.y = y;
+		id = nextId;
+		nextId++;
+	}
+	
+	public Point(double x, double y, int number) {
+		this.x = x;
+		this.y = y;
+		this.number = number;
 		id = nextId;
 		nextId++;
 	}
@@ -56,10 +73,10 @@ public class Point implements Serializable{
 		return nextId;
 	}
 
-	 public void printInfo() {
-	        String info = getId() + "; " + getX() + "; " + getY();
-	        System.out.println(info);
-	    }
+	@Override
+	public String toString() {
+		return "Point [x=" + x + ", y=" + y + ", number=" + number + ", id=" + id + "]";
+	}
 
 	@Override
 	public int hashCode() {

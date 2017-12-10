@@ -1,43 +1,53 @@
 package data;
 
 import java.io.Serializable;
+import java.util.HashSet;
+import java.util.LinkedHashSet;
 
 public class Construction implements Serializable {
 
 	private static final long serialVersionUID = -1824336916175014578L;
 
-	public static final int maxBars = 100;
+	public static final int maxBars = 1000;
 
 	private Bar[] bars;
-	private Force[] forces;
-	private Support[] supports;
-	
+	HashSet<Point> points = new HashSet<>();
+	HashSet<Support> supports = new HashSet<>();
+	HashSet<Force> forces = new HashSet<>();
+
 	public static int barsNumber;
-	private int forceNumber;
-	private int supportNumber;
 
 	public Construction() {
 		bars = new Bar[maxBars];
-		forces = new Force[maxBars];
-		supports = new Support[maxBars];
+		points = new LinkedHashSet<>();
+		forces = new HashSet<>();
+		supports = new HashSet<>();
+	}
 
+	public HashSet<Point> getPoints() {
+		return points;
+	}
+
+	public void setPoints(HashSet<Point> points) {
+		this.points = points;
 	}
 
 	public int getForceNumber() {
-		return forceNumber;
+		return forces.size();
 	}
-	public Force[] getForces() {
+
+	public HashSet<Force> getForces() {
 		return forces;
 	}
-	
+
 	public int getSupportNumber() {
-		return supportNumber;
+		return supports.size();
 	}
-	
-	public Support[] getSupport() {
+
+	public HashSet<Support> getSupport() {
 		return supports;
 	}
-	
+
 	public int getBarsNumber() {
 		return barsNumber;
 	}
@@ -47,7 +57,6 @@ public class Construction implements Serializable {
 	}
 
 	public void addBar(Bar bar) throws ArrayIndexOutOfBoundsException {
-
 		if (barsNumber == maxBars) {
 			throw new ArrayIndexOutOfBoundsException("Maksymalna liczba pretów: " + maxBars);
 		}
@@ -55,7 +64,25 @@ public class Construction implements Serializable {
 		barsNumber++;
 	}
 
+	public void addPoint(Point point) {
+		if (points.contains(point) == true) {
+			Point.setNextId(Point.getNextId() - 1);
+		} else {
+			points.add(point);
+		}
+		/*
+		 * for (Point e : points) { System.out.println(e); }
+		 */
+	}
+
 	public void printBars() {
+		barsNumber = 0;
+		for (int k = 0; k < maxBars; k++) {
+			if (bars[k] != null) {
+				barsNumber++;
+			}
+		}
+		
 		if (barsNumber == 0) {
 			System.out.println("Zdefiniuj konstrukcje");
 		}
@@ -66,73 +93,31 @@ public class Construction implements Serializable {
 	}
 
 	public void printForces() {
-		if (forceNumber == 0) {
-			System.out.println("Zdefiniuj obciazenie");
+		if (forces.size() == 0) {
+			System.out.println("Brak zdefiniowanego obciążenia");
 		}
-		for (int i = 0; i < forceNumber; i++) {
-			System.out.println(forces[i]);
+		for (Force u : forces) {
+			System.out.println(u);
 		}
 	}
 
 	public void printSupport() {
-		if (supportNumber == 0) {
+		if (supports.size() == 0) {
 			System.out.println("Zdefiniuj podpory");
 		}
-		for (int i = 0; i < supportNumber; i++) {
-			System.out.println(supports[i]);
+
+		for (Support u : supports) {
+			System.out.println(u);
 		}
 	}
 
 	public void addForce(Force force) {
-		forces[forceNumber] = force;
+		forces.add(force);
 		System.out.println("dodano obciążenie");
-		forceNumber++;
 	}
 
 	public void addSupport(Support support) {
-		supports[supportNumber] = support;
+		supports.add(support);
 		System.out.println("dodano podpore");
-		supportNumber++;
 	}
-
-	public void deletePoints() {
-		Bar.setNextId(barsNumber + 1);
-		for (int i = 0; i < Bar.getNextId() - 1; i++) {
-			for (int k = 0; k < Bar.getNextId() - 1; k++) {
-				if (bars[i].start.equals(bars[k].start) && k != i) {
-					bars[k].setStart(bars[i].start);
-				}
-				if (bars[i].start.equals(bars[k].end) && k != i) {
-					bars[k].setEnd(bars[i].start);
-				}
-				if (bars[i].end.equals(bars[k].end) && k != i) {
-					bars[k].setEnd(bars[i].end);
-				}
-			}
-		}
-	}
-
-	public void renumerPoints() {
-		int newNumbers = 1;
-		for (int k = 0; k < Bar.getNextId() - 1; k++) {
-			bars[k].start.setId(-1);
-			bars[k].end.setId(-1);
-		}
-
-		for (int j = 0; j < Bar.getNextId() - 1; j++) {
-			if (bars[j].start.getId() < 0) {
-				bars[j].start.setId(newNumbers);
-				newNumbers++;
-			}
-			if (bars[j].end.getId() < 0) {
-				bars[j].end.setId(newNumbers);
-				newNumbers++;
-			}
-		}
-
-		Point.setNextId(newNumbers);
-		System.out.println("barsNumber: " + barsNumber);
-		System.out.println("Point.getNextId(): " + Point.getNextId());
-	}
-
 }

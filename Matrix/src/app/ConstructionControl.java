@@ -9,6 +9,7 @@ import data.Construction;
 import utils.DataReader;
 import utils.FileManager;
 import data.Force;
+import data.Point;
 import data.Support;
 import data.Calculation;
 
@@ -48,6 +49,9 @@ public class ConstructionControl {
 				case ADD_BAR:
 					addBar();
 					break;
+				/*
+				 * case ADD_POINT: addPoint(); break;
+				 */
 				case EXIT:
 					exit();
 				case ADD_FORCE:
@@ -59,21 +63,10 @@ public class ConstructionControl {
 				case PRINT:
 					printConstruction();
 					break;
-				case CORRECT:
-					deletePoints();
-					break;
+
 				case CALCULATE:
-					calculation.createTable(construction);
-					calculation.tableR0(construction);
-					calculation.tableR(construction);
-
-					calculation.createCos(construction);
-					calculation.stiffnessKe(construction);
-					calculation.multipleTable(construction);
-					calculation.stiffnessK(construction);
-					calculation.resultsq();
+					calculation();
 					break;
-
 				}
 			} catch (InputMismatchException e) {
 				System.out.println("Wprowadzono niepoprawne dane, publikacji nie dodano");
@@ -90,7 +83,45 @@ public class ConstructionControl {
 	}
 
 	private void addBar() {
-		Bar bar = dataReader.readAndCreateBar();
+		Bar bar = new Bar();
+		int n = Point.getNextId();
+
+		System.out.println("Podaj punkt początkowy: ");
+		Point start = dataReader.readAndCreatePoint();
+		construction.addPoint(start);
+		if (n != Point.getNextId()) {
+			bar.setStart(start);
+		} else {
+			Bar[] bars = construction.getBars();
+			System.out.println("nesxt id for bars: " + Bar.getNextId());
+			for (int i = 0; i < Bar.getNextId() - 2; i++) {
+				if (start.equals(bars[i].start)) {
+					bar.setStart(bars[i].start);
+				}
+				if (start.equals(bars[i].end)) {
+					bar.setStart(bars[i].end);
+				}
+			}
+		}
+		int s = Point.getNextId();
+
+		System.out.println("Podaj punkt końcowy: ");
+		Point end = dataReader.readAndCreatePoint();
+		construction.addPoint(end);
+		if (s != Point.getNextId()) {
+			bar.setEnd(end);
+		} else {
+			Bar[] bars = construction.getBars();
+			System.out.println("nesxt id for bars: " + Bar.getNextId());
+			for (int i = 0; i < Bar.getNextId() - 2; i++) {
+				if (end.equals(bars[i].start)) {
+					bar.setEnd(bars[i].start);
+				}
+				if (end.equals(bars[i].end)) {
+					bar.setEnd(bars[i].end);
+				}
+			}
+		}
 		construction.addBar(bar);
 	}
 
@@ -108,12 +139,22 @@ public class ConstructionControl {
 		construction.printBars();
 		construction.printForces();
 		construction.printSupport();
-		calculation.printMatrix();
+		// calculation.printMatrix();
 	}
 
-	private void deletePoints() {
-		construction.deletePoints();
-		construction.renumerPoints();
+	private void calculation() {
+		if (construction.getSupportNumber() == 0) {
+			System.out.println("Przed wykonaniem obliczeń zdefiniuj podpory.");
+		} else {
+			calculation.createTable(construction);
+			calculation.tableR0(construction);
+			calculation.tableR(construction);
+			calculation.createCos(construction);
+			calculation.stiffnessKe(construction);
+			calculation.multipleTable(construction);
+			calculation.stiffnessK(construction);
+			calculation.resultsq();
+		}
 	}
 
 	private void printOptions() {

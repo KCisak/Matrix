@@ -11,21 +11,28 @@ public class Bar implements Serializable {
 
 	private int id;
 	private static int nextId = 1;
-	
+
 	public static void setNextId(int nextId) {
 		Bar.nextId = nextId;
 	}
-
+	public Bar() {
+		id = nextId;
+		nextId++;
+		System.out.println("next ID: "+ nextId);
+	}
+	
+	public Bar(Point start) {
+		this.start = start;
+	
+	}
+	
 	public Bar(Point start, Point end) {
-		if (start.equals(end)) {
-			System.err.println(
-					"nie można zdefiniowac preta. Wspólrzedne poczatku musza byc rozne" + "niż wspolrzedne końca");
-		} else {
-			this.start = start;
-			this.end = end;
-			id = nextId;
-			nextId++;
-		}
+		this.start = start;
+		this.end = end;
+		
+		id = nextId;
+		nextId++;
+		System.out.println("next ID: "+ nextId);
 	}
 
 	public Bar(Bar bar) {
@@ -68,6 +75,7 @@ public class Bar implements Serializable {
 	public void printInfo() {
 		String info = getId() + "; " + getStart().getX() + "; " + getStart().getY() + "; " + getEnd().getX() + "; "
 				+ getEnd().getY() + " numery punktow: " + getStart().getId() + " & " + getEnd().getId();
+		//String info2 = "numer punktu test:" + getStart().getNumber();
 		System.out.println(info);
 	}
 
@@ -75,8 +83,9 @@ public class Bar implements Serializable {
 		double dist = java.awt.Point.distance(getStart().getX(), getStart().getY(), getEnd().getX(), getEnd().getY());
 		System.out.println("Dugośc preta: " + String.format("%.2f", dist) + " m");
 	}
+
 	public double dlugoscPreta() {
-		double y  = java.awt.Point.distance(getStart().getX(), getStart().getY(), getEnd().getX(), getEnd().getY());
+		double y = java.awt.Point.distance(getStart().getX(), getStart().getY(), getEnd().getX(), getEnd().getY());
 		return y;
 	}
 

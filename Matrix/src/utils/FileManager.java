@@ -9,7 +9,7 @@ import java.io.ObjectOutputStream;
 import data.Construction;
 
 public class FileManager {
-	 public static final String FILE_NAME = "Construction.mes";
+	 public static final String FILE_NAME = "Construction.fe";
 	 
 	 public void writeLibraryToFile(Construction con) {
 	        try(

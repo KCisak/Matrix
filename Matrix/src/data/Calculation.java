@@ -1,5 +1,7 @@
 package data;
 
+import java.util.HashSet;
+
 //import java.util.Collection;
 
 import org.ejml.simple.SimpleMatrix;
@@ -42,7 +44,6 @@ public class Calculation {
 
 	private static int tableNumber = 0;
 	// macierz alokacji
-	
 
 	public void createTable(Construction con) {
 		Bar[] prety = con.getBars();
@@ -100,7 +101,7 @@ public class Calculation {
 			tableK[i] = new SimpleMatrix();
 			tableK[i] = (simpleMatrices[i].transpose()).mult(simpleCos[i].transpose()).mult(tableKe[i])
 					.mult(simpleCos[i]).mult(simpleMatrices[i]);
-			
+
 			globalK = globalK.plus(tableK[i]);
 			helpTable = helpTable.plus(tableK[i]);
 		}
@@ -116,18 +117,19 @@ public class Calculation {
 		reactionsTable = globalK.invert().mult(tableR0.transpose());
 		// reakcje w wezlach
 		resultsR = helpTable.mult(reactionsTable).minus(tableR0.transpose());
-		//resultsR = helpTable.mult(reactionsTable);
-	}
+		}
 
-	// global table of forces (poprawic przypadek gdy nie ma zadanych sil)
+	// global table of forces
 	public void tableR0(Construction con) {
-		Force[] forces = con.getForces();
+		HashSet<Force> forces = con.getForces();
 		int dim = 2 * (Point.getNextId() - 1);
 		tableR0 = new SimpleMatrix(1, dim);
-		for (int i = 0; i < con.getForceNumber(); i++) {
-			tableR0.set(0, 2 * forces[i].getNumberOfPoint() - 2, forces[i].getvalueX());
-			tableR0.set(0, 2 * forces[i].getNumberOfPoint() - 1, forces[i].getvalueY());
+		
+		for (Force e : forces) {
+			tableR0.set(0, 2 * e.getNumberOfPoint() - 2, e.getvalueX());
+			tableR0.set(0, 2 * e.getNumberOfPoint() - 1, e.getvalueY());
 		}
+		tableR0.print();
 	}
 
 	// table of local displacement and forces in bars
@@ -140,13 +142,14 @@ public class Calculation {
 
 	// global table of supports
 	public void tableR(Construction con) {
-		Support[] supports = con.getSupport();
+		HashSet<Support> supports = con.getSupport();
 		int dim = 2 * (Point.getNextId() - 1);
 		tableR = new SimpleMatrix(1, dim);
-		for (int i = 0; i < con.getSupportNumber(); i++) {
-			tableR.set(0, 2 * supports[i].getPointNumber() - 2, 1);
-			tableR.set(0, 2 * supports[i].getPointNumber() - 1, 1);
+		for (Support tmp : supports) {
+			tableR.set(0, 2 * tmp.getPointNumber() - 2, 1);
+			tableR.set(0, 2 * tmp.getPointNumber() - 1, 1);
 		}
+		tableR.print();
 	}
 
 	public void multipleTable(Construction con) {
@@ -161,9 +164,9 @@ public class Calculation {
 			simpleMatrices[i].print();
 			simpleCos[i].print();
 			tableKe[i].print();
-			//tableQ[i].print();
-			//resultsq[i].print();
-			System.out.println("Sila osiowa w precie nr.: "+ (i+1));
+			// tableQ[i].print();
+			// resultsq[i].print();
+			System.out.println("Sila osiowa w precie nr.: " + (i + 1));
 			results[i].print();
 		}
 		tableR0.print();
