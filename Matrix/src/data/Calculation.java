@@ -47,8 +47,9 @@ public class Calculation {
 
 	public void createTable(Construction con) {
 		Bar[] prety = con.getBars();
+		System.out.println(Point.getNextId());
 		for (int i = 0; i < con.getBarsNumber(); i++) {
-			simpleMatrices[tableNumber] = new SimpleMatrix(4, 2 * (Point.getNextId() - 1));
+			simpleMatrices[i] = new SimpleMatrix(4, 2 * (Point.getNextId() - 1));
 			simpleMatrices[i].set(0, (2 * prety[i].start.getId() - 2), 1);
 			simpleMatrices[i].set(1, 2 * prety[i].start.getId() - 1, 1);
 			simpleMatrices[i].set(2, (2 * prety[i].end.getId() - 2), 1);

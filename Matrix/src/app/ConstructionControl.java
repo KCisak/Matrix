@@ -28,7 +28,8 @@ public class ConstructionControl {
 		fileManager = new FileManager();
 		try {
 			construction = fileManager.readLibraryFromFile();
-			System.out.println("Wczytano dane biblioteki z pliku ");
+			System.out.println("Wczytano dane z pliku ");
+			
 		} catch (ClassNotFoundException | IOException e) {
 			construction = new Construction();
 			calculation = new Calculation();
@@ -63,7 +64,6 @@ public class ConstructionControl {
 				case PRINT:
 					printConstruction();
 					break;
-
 				case CALCULATE:
 					calculation();
 					break;
@@ -84,12 +84,12 @@ public class ConstructionControl {
 
 	private void addBar() {
 		Bar bar = new Bar();
-		int n = Point.getNextId();
+		int n = construction.getPointsNumber();
 
 		System.out.println("Podaj punkt początkowy: ");
 		Point start = dataReader.readAndCreatePoint();
 		construction.addPoint(start);
-		if (n != Point.getNextId()) {
+		if (n != construction.getPointsNumber()) {
 			bar.setStart(start);
 		} else {
 			Bar[] bars = construction.getBars();
@@ -103,16 +103,15 @@ public class ConstructionControl {
 				}
 			}
 		}
-		int s = Point.getNextId();
+		int s = construction.getPointsNumber();
 
 		System.out.println("Podaj punkt końcowy: ");
 		Point end = dataReader.readAndCreatePoint();
 		construction.addPoint(end);
-		if (s != Point.getNextId()) {
+		if (s != construction.getPointsNumber()) {
 			bar.setEnd(end);
 		} else {
 			Bar[] bars = construction.getBars();
-			System.out.println("nesxt id for bars: " + Bar.getNextId());
 			for (int i = 0; i < Bar.getNextId() - 2; i++) {
 				if (end.equals(bars[i].start)) {
 					bar.setEnd(bars[i].start);
@@ -139,7 +138,9 @@ public class ConstructionControl {
 		construction.printBars();
 		construction.printForces();
 		construction.printSupport();
-		// calculation.printMatrix();
+	//	System.out.println(Point.getNextId());
+	//	System.out.println(construction.getPointsNumber());
+	//	calculation.printMatrix();
 	}
 
 	private void calculation() {

@@ -32,8 +32,6 @@ public class DataReader {
 		return new Point(x, y, n);
 	}
 	
-	
-	
 	public Force readAndCreateForce() {
 		System.out.println("Czy kierunek X (0: nie; 1: tak (znak +/- oznacza kierunek wektora): ");
 		int x = sc.nextInt();

@@ -32,6 +32,10 @@ public class Construction implements Serializable {
 		this.points = points;
 	}
 
+	public int getPointsNumber() {
+		return points.size();
+	}
+
 	public int getForceNumber() {
 		return forces.size();
 	}
@@ -70,9 +74,6 @@ public class Construction implements Serializable {
 		} else {
 			points.add(point);
 		}
-		/*
-		 * for (Point e : points) { System.out.println(e); }
-		 */
 	}
 
 	public void printBars() {
@@ -82,7 +83,7 @@ public class Construction implements Serializable {
 				barsNumber++;
 			}
 		}
-		
+
 		if (barsNumber == 0) {
 			System.out.println("Zdefiniuj konstrukcje");
 		}

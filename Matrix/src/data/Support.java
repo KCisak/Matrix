@@ -47,5 +47,4 @@ public class Support implements Serializable {
 	public String toString() {
 		return "Support [pointNumber=" + pointNumber + "]";
 	}
-	
 }
